@@ -20,6 +20,14 @@
         sysctl_set: yes
         state: present
         reload: yes
+    - name: Ensure firewalld is running
+      systemd:
+        state: started
+        name: firewalld
+    - name: Enable NAT to outside
+      command: "firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o enp0s3 -j MASQUERADE -s 192.168.0.0/16"
+    - name: Reload firewall
+      command: "firewall-cmd --reload"
 
 - hosts: all:!router
   become: true
