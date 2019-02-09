@@ -2,12 +2,13 @@
   become: true
 
   tasks:
-    - name: Install network utilities
+    - name: Install utilities
       yum:
         name: "{{ item }}"
       loop:
         - tcpdump
         - bind-utils
+        - vim
 
 - hosts: router
   become: true
@@ -24,8 +25,28 @@
       systemd:
         state: started
         name: firewalld
-    - name: Enable NAT to outside
-      command: "firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o enp0s3 -j MASQUERADE -s 192.168.0.0/16"
+        enabled: true
+        #    - name: Enable NAT to outside
+        #      command: "firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o enp0s3 -j MASQUERADE -s 192.168.0.0/16"
+    - name: Add internal NICs to internal zone
+      firewalld:
+        interface: "{{ item }}"
+        zone: internal
+        state: enabled
+      loop:
+        - "enp0s8"
+        - "enp0s9"
+        - "enp0s10"
+    - name: NAT Masquerade default zone (usually public)
+      firewalld:
+        masquerade: yes
+        state: enabled
+        permanent: yes
+    - name: Allow outgoing connections
+      command: "firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 0 -s 192.168.0.0/16 -o enp0s3 -j ACCEPT"
+    - name: Accept incoming established/active connections
+      command: "firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 0 -i enp0s3 -d 192.168.0.0/16 -m state --state RELATED,ESTABLISHED -j ACCEPT"
+
     - name: Reload firewall
       command: "firewall-cmd --reload"
 
