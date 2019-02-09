@@ -1,0 +1,38 @@
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Install network utilities
+      yum:
+        name: "{{ item }}"
+      loop:
+        - tcpdump
+        - bind-utils
+
+- hosts: router
+  become: true
+
+  tasks:
+    - name: Enable ip forwarding in router
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: 1
+        sysctl_set: yes
+        state: present
+        reload: yes
+
+- hosts: all:!router
+  become: true
+
+  vars:
+    default_gateways: {
+      'client': '192.168.101.1', 'infra': '192.168.102.1', 'cin': '192.168.103.1'
+    }
+
+  tasks:
+    - name: Remove default gateway
+      command: "ip route del default"
+      ignore_errors: "true"
+    - name: Add default gateway to router
+      command: "ip route add default via {{ default_gateways[inventory_hostname] }}"
+
