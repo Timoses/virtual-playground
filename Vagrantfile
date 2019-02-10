@@ -7,19 +7,19 @@ Vagrant.configure("2") do |config|
   config.vm.define "client" do |client|
     client.vm.hostname = "client"
     client.vm.network "private_network", ip: "192.168.101.2",
-        virtualbox__intnet: "client"
+        virtualbox__intnet: "client", auto_config: false
   end
 
   config.vm.define "infra" do |infra|
     infra.vm.hostname = "infra"
     infra.vm.network "private_network", ip: "192.168.102.2",
-        virtualbox__intnet: "infra"
+        virtualbox__intnet: "infra", auto_config: false
   end
 
   config.vm.define "cin" do |cin|
     cin.vm.hostname = "cin"
     cin.vm.network "private_network", ip: "192.168.103.2",
-        virtualbox__intnet: "cin"
+        virtualbox__intnet: "cin", auto_config: false
   end
 
   config.vm.define "router" do |router|

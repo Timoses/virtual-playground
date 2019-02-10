@@ -1,3 +1,25 @@
+- hosts: all:!router
+  become: true
+
+  vars:
+    host_ips: {
+      'client': '192.168.101.2/24', 'infra': '192.168.102.2/24', 'cin': '192.168.103.2/24'
+    }
+    default_gateways: {
+      'client': '192.168.101.1', 'infra': '192.168.102.1', 'cin': '192.168.103.1'
+    }
+
+  tasks:
+    - name: Configure internal network IP
+      command: "ip a add {{ host_ips[inventory_hostname] }} dev eth1"
+      ignore_errors: "true"
+    - name: Remove default gateway
+      command: "ip route del default"
+      ignore_errors: "true"
+    - name: Add default gateway to router
+      command: "ip route add default via {{ default_gateways[inventory_hostname] }}"
+      ignore_errors: "true"
+
 - hosts: all
   become: true
 
@@ -9,6 +31,22 @@
         - tcpdump
         - bind-utils
         - vim
+        - tmux
+
+- hosts: infra
+  become: true
+  tasks:
+    - yum:
+        name: "bind"
+
+- hosts: all
+  become: true
+  tasks:
+    - name: Remove nameservers in /etc/resolv.conf
+      lineinfile:
+        path: /etc/resolv.conf
+        regexp: "^nameserver"
+        state: absent
 
 - hosts: router
   become: true
@@ -34,34 +72,22 @@
         zone: internal
         state: enabled
       loop:
-        - "enp0s8"
-        - "enp0s9"
-        - "enp0s10"
+        - "eth1"
+        - "eth2"
+        - "eth3"
     - name: NAT Masquerade default zone (usually public)
       firewalld:
         masquerade: yes
         state: enabled
         permanent: yes
     - name: Allow outgoing connections
-      command: "firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 0 -s 192.168.0.0/16 -o enp0s3 -j ACCEPT"
+      command: "firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 0 -s 192.168.0.0/16 -o eth0 -j ACCEPT"
     - name: Accept incoming established/active connections
-      command: "firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 0 -i enp0s3 -d 192.168.0.0/16 -m state --state RELATED,ESTABLISHED -j ACCEPT"
+      command: "firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 0 -i eth0 -d 192.168.0.0/16 -m state --state RELATED,ESTABLISHED -j ACCEPT"
 
     - name: Reload firewall
       command: "firewall-cmd --reload"
 
-- hosts: all:!router
-  become: true
 
-  vars:
-    default_gateways: {
-      'client': '192.168.101.1', 'infra': '192.168.102.1', 'cin': '192.168.103.1'
-    }
 
-  tasks:
-    - name: Remove default gateway
-      command: "ip route del default"
-      ignore_errors: "true"
-    - name: Add default gateway to router
-      command: "ip route add default via {{ default_gateways[inventory_hostname] }}"
 
