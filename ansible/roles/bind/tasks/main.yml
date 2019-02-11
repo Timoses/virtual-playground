@@ -1,0 +1,18 @@
+---
+- name: BIND | Create named.conf
+  template:
+    src: named.conf.j2
+    dest: /etc/named.conf
+  notify: bind_restart
+
+- name: BIND | Create virtual.net.zone
+  template:
+    src: virtual.net.zone.j2
+    dest: /var/named/virtual.net.zone
+  notify: bind_restart
+
+- name: Start BIND (named)
+  service:
+    name: named
+    state: started
+

@@ -1,3 +1,35 @@
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Install utilities
+      yum:
+        name: "{{ item }}"
+      loop:
+        - tcpdump
+        - bind-utils
+        - vim
+        - tmux
+
+- hosts: infra
+  become: true
+  tasks:
+    - yum:
+        name: "{{ item }}"
+      loop:
+        - bind
+        - python-gobject
+        - NetworkManager-glib
+
+- hosts: all
+  become: true
+  tasks:
+    - name: Remove nameservers in /etc/resolv.conf
+      lineinfile:
+        path: /etc/resolv.conf
+        regexp: "^nameserver"
+        state: absent
+
 - hosts: all:!router
   become: true
 
@@ -19,34 +51,17 @@
     - name: Add default gateway to router
       command: "ip route add default via {{ default_gateways[inventory_hostname] }}"
       ignore_errors: "true"
-
-- hosts: all
-  become: true
-
-  tasks:
-    - name: Install utilities
-      yum:
-        name: "{{ item }}"
-      loop:
-        - tcpdump
-        - bind-utils
-        - vim
-        - tmux
-
-- hosts: infra
-  become: true
-  tasks:
-    - yum:
-        name: "bind"
-
-- hosts: all
-  become: true
-  tasks:
-    - name: Remove nameservers in /etc/resolv.conf
+    - name: Set DNS nameserver
       lineinfile:
         path: /etc/resolv.conf
         regexp: "^nameserver"
-        state: absent
+        line: "nameserver 192.168.102.2"
+        state: present
+    - name: Set DNS search domain
+      lineinfile:
+        path: /etc/resolv.conf
+        line: "search virtual.net"
+        state: present
 
 - hosts: router
   become: true
@@ -69,7 +84,9 @@
     - name: Add internal NICs to internal zone
       firewalld:
         interface: "{{ item }}"
-        zone: internal
+        zone: trusted # should be "internal"!!! TODO: but then can't reach per DNS
+                      # tcpdump says:
+                      #   IP router > 192.168.101.2: ICMP host 192.168.102.2 unreachable - admin prohibited, length 64
         state: enabled
       loop:
         - "eth1"
@@ -87,6 +104,11 @@
 
     - name: Reload firewall
       command: "firewall-cmd --reload"
+
+- hosts: infra
+  become: true
+  roles:
+    - bind
 
 
 

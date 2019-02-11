@@ -1,0 +1,19 @@
+; Authoritative data for example.com zone
+;
+$TTL 1D
+@   IN SOA  ns.virtual.net.   hostmaster.virtual.net. (
+                                       2019031001      ; serial
+                                       1D              ; refresh
+                                       1H              ; retry
+                                       1W              ; expire
+                                       3H )            ; minimum
+
+$ORIGIN         virtual.net.
+virtual.net.            IN      NS      ns.virtual.net.
+ns                      IN      A       192.168.102.2
+client                  IN      A       192.168.101.2
+infra                   IN      A       192.168.102.2
+cin                     IN      A       192.168.103.2
+
+; Mail server MX record
+virtual.net.            IN      MX      10      mail.virtual.net.
