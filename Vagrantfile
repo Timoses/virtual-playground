@@ -2,9 +2,7 @@
 # https://drive.google.com/open?id=15pEGT6TB5kWFl9kXrpdu7VqCEHKykfuj
 
 Vagrant.configure("2") do |config|
-  config.vm.provision "shell", inline: "echo Hello"
-
-  config.vm.box = "geerlingguy/centos7"
+  config.vm.box = "centos/7"
 
   config.vm.define "client" do |client|
     client.vm.hostname = "client"
