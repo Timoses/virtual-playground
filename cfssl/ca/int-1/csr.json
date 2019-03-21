@@ -1,0 +1,22 @@
+{
+    "hosts": [
+        "Virtual Net - Intermediate CA 1"
+    ],
+    "CN": "Virtual Net - Intermediate CA 1",
+    "key": {
+        "algo": "rsa",
+        "size": 4096
+    },
+    "names": [
+        {
+            "C": "DE",
+            "L": "Berlin",
+            "O": "Virtual",
+            "OU": "Virtual Net",
+            "ST": "Berlin"
+        }
+    ],
+    "ca": {
+        "expiry": "262800h"
+    }
+}

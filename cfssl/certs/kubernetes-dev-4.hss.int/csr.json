@@ -1,0 +1,18 @@
+{
+    "hosts": [
+        "kubernetes-dev-4.hss.int"
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 4096
+    },
+    "names": [
+        {
+            "C": "DE",
+            "L": "Berlin",
+            "O": "Kubernetes",
+            "OU": "Kubernetes Dev 4",
+            "ST": "Berlin"
+        }
+    ]
+}
