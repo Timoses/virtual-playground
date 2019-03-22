@@ -1,7 +1,4 @@
 {
-    "hosts": [
-        "Virtual Net - Root CA"
-    ],
     "CN": "Virtual Net - Root CA",
     "key": {
         "algo": "rsa",
@@ -15,8 +12,5 @@
             "OU": "Virtual Net",
             "ST": "Berlin"
         }
-    ],
-    "ca": {
-        "expiry": "262800h"
-    }
+    ]
 }

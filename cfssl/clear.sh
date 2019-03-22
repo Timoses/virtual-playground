@@ -5,8 +5,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-    rm $DIR/**/*.pem
-    rm $DIR/**/*.csr
+    find $DIR -name "*.pem" -type f -delete
+    find $DIR -name "*.csr" -type f -delete
 fi
 
 

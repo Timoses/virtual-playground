@@ -1,6 +1,9 @@
 {
+    "CN": "kubernetes-dev-4.hss.int",
     "hosts": [
-        "kubernetes-dev-4.hss.int"
+        "kubernetes-dev-4.hss.int",
+        "127.0.0.1",
+        "www.kubernetes-dev-4.hss.int"
     ],
     "key": {
         "algo": "rsa",
