@@ -17,6 +17,13 @@
                     "crl sign",
                     "signing"
                 ]
+            },
+            "client": {
+                "expiry": "262800h",
+                "usages": [
+                    "digital signature",
+                    "key encipherment"
+                ]
             }
         }
     }

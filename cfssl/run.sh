@@ -7,8 +7,6 @@ SCRIPT=$(basename $0)
 
 CSR_JSON="csr.json"
 
-ROOT_TO_INT_CONFIG="$DIR/ca/root/root-to-int-ca.json"
-INT_TO_CLIENT_CONFIG="$DIR/ca/int-1/int-to-client-cert.json"
 CA_CONFIG_FILE="$DIR/ca/ca-config.json"
 
 if [ -z "$GOPATH" ] ; then
@@ -66,8 +64,6 @@ function init() {
     if [ ! -f $INT_CERT_FILE ] || [ ! -f $INT_KEY_FILE ] ; then
         echo " ======== Creating Intermediate CA ======== "
         cfssl gencert -initca $CSR_JSON | cfssljson -bare $BASE
-        echo $ROOT_TO_INT_CONFIG
-        cat $ROOT_TO_INT_CONFIG
         $CFSSL sign -ca $ROOT_CERT_FILE -ca-key $ROOT_KEY_FILE -config $CA_CONFIG_FILE -profile 'intermediate' $INT_CSR_FILE | $CFSSLJSON -bare $BASE
     fi
 
@@ -79,7 +75,7 @@ function init() {
         CERT_FILE="$(pwd)/$BASE.pem"
         KEY_FILE="$(pwd)/$BASE-key.pem"
         if [ ! -f $CERT_FILE ] || [ ! -f $KEY_FILE ] ; then
-            $CFSSL gencert -ca $INT_CERT_FILE -ca-key $INT_KEY_FILE -config $INT_TO_CLIENT_CONFIG $CSR_JSON | $CFSSLJSON -bare $BASE
+        $CFSSL gencert -ca $INT_CERT_FILE -ca-key $INT_KEY_FILE -config $CA_CONFIG_FILE -profile 'client' $CSR_JSON | $CFSSLJSON -bare $BASE
         fi
     done
 }

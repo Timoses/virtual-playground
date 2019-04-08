@@ -3,7 +3,9 @@
     "hosts": [
         "kubernetes-dev-4.hss.int",
         "127.0.0.1",
-        "www.kubernetes-dev-4.hss.int"
+        "www.kubernetes-dev-4.hss.int",
+        "kubernetes-dev-4.mgmt.hss.int",
+        "www.kubernetes-dev-4.mgmt.hss.int"
     ],
     "key": {
         "algo": "rsa",
@@ -13,8 +15,8 @@
         {
             "C": "DE",
             "L": "Berlin",
-            "O": "Kubernetes",
-            "OU": "Kubernetes Dev 4",
+            "O": "BIOTRONIK",
+            "OU": "HSS",
             "ST": "Berlin"
         }
     ]
