@@ -1,0 +1,30 @@
+---
+- name: Install DHCP and TFTP
+  yum:
+    name: "{{ item }}"
+  loop:
+    - dhcp
+    - tftp
+    - tftp-server
+
+- name: Configure DHCP
+  template:
+    src: dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+  notify: restart | dhcp
+
+- name: Start DHCP and TFTP service
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - dhcpd
+    - tftp
+
+- name: Configure PXE
+  include_tasks: pxe.yml
+  vars:
+    pxe_config:
+      dhcp_server: 192.168.102.2
+      tftp_server: 192.168.102.2

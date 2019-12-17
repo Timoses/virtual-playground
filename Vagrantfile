@@ -32,6 +32,20 @@ Vagrant.configure("2") do |config|
         virtualbox__intnet: "cin"
   end
 
+  config.vm.define :pxe_client do |pxe_client|
+    pxe_client.vm.provider :virtualbox do |vb|
+      vb.customize [
+        'modifyvm', :id,
+        '--nic1', 'intnet',
+        '--intnet1', 'infra',
+        '--boot1', 'net',
+        '--boot2', 'none',
+        '--boot3', 'none',
+        '--boot4', 'none'
+      ]
+    end
+  end
+
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "ansible/playbook.yml"
     ansible.verbose = "vv"
