@@ -32,18 +32,19 @@ Vagrant.configure("2") do |config|
         virtualbox__intnet: "cin"
   end
 
-  config.vm.define :pxe_client do |pxe_client|
-    pxe_client.vm.provider :virtualbox do |vb|
-      vb.customize [
-        'modifyvm', :id,
-        '--nic1', 'intnet',
-        '--intnet1', 'infra',
-        '--boot1', 'net',
-        '--boot2', 'none',
-        '--boot3', 'none',
-        '--boot4', 'none'
-      ]
-    end
+  config.vm.define :pxe do |pxe|
+    pxe.vm.network "private_network", virtualbox__intnet: "infra", type: "dhcp"
+    #pxe_client.vm.provider :virtualbox do |vb|
+    #  vb.customize [
+    #    'modifyvm', :id,
+    #    '--nic1', 'intnet',
+    #    '--intnet1', 'infra',
+    #    '--boot1', 'net',
+    #    '--boot2', 'none',
+    #    '--boot3', 'none',
+    #    '--boot4', 'none'
+    #  ]
+    #end
   end
 
   config.vm.provision "ansible" do |ansible|

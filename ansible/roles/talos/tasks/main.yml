@@ -1,0 +1,9 @@
+---
+- name: Enable Epel
+  yum:
+    name: epel-release
+
+- name: Install lighttpd
+  package:
+    name: lighttpd
+
