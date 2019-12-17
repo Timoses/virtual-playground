@@ -1,4 +1,10 @@
 ---
+- yum:
+    name: "{{ item }}"
+  loop:
+    - bind
+    - python-gobject
+    - NetworkManager-glib
 - name: BIND | Create named.conf
   template:
     src: named.conf.j2

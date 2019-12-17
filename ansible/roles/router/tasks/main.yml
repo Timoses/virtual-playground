@@ -1,0 +1,43 @@
+---
+- name: Remove nameservers in /etc/resolv.conf
+  lineinfile:
+    path: /etc/resolv.conf
+    regexp: "^nameserver"
+    state: absent
+- name: Enable ip forwarding in router
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: Ensure firewalld is running
+  systemd:
+    state: started
+    name: firewalld
+    enabled: true
+    #    - name: Enable NAT to outside
+    #      command: "firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o enp0s3 -j MASQUERADE -s 192.168.0.0/16"
+- name: Add internal NICs to internal zone
+  firewalld:
+    interface: "{{ item }}"
+    zone: trusted # should be "internal"!!! TODO: but then can't reach per DNS
+                  # tcpdump says:
+                  #   IP router > 192.168.101.2: ICMP host 192.168.102.2 unreachable - admin prohibited, length 64
+    state: enabled
+  loop:
+    - "eth1"
+    - "eth2"
+    - "eth3"
+- name: NAT Masquerade default zone (usually public)
+  firewalld:
+    masquerade: yes
+    state: enabled
+    permanent: yes
+- name: Allow outgoing connections
+  command: "firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 0 -s 192.168.0.0/16 -o eth0 -j ACCEPT"
+- name: Accept incoming established/active connections
+  command: "firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 0 -i eth0 -d 192.168.0.0/16 -m state --state RELATED,ESTABLISHED -j ACCEPT"
+
+- name: Reload firewall
+  command: "firewall-cmd --reload"

@@ -1,0 +1,21 @@
+---
+- name: Configure internal network IP
+  command: "ip a add {{ host_ips[inventory_hostname] }} dev eth1"
+  ignore_errors: "true"
+- name: Remove default gateway
+  command: "ip route del default"
+  ignore_errors: "true"
+- name: Add default gateway to router
+  command: "ip route add default via {{ default_gateways[inventory_hostname] }}"
+  ignore_errors: "true"
+- name: Set DNS nameserver
+  lineinfile:
+    path: /etc/resolv.conf
+    regexp: "^nameserver"
+    line: "nameserver 192.168.102.2"
+    state: present
+- name: Set DNS search domain
+  lineinfile:
+    path: /etc/resolv.conf
+    line: "search virtual.net"
+    state: present
