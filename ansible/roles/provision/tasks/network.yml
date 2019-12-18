@@ -1,13 +1,15 @@
 ---
-- name: Configure internal network IP
-  command: "ip a add {{ host_ips[inventory_hostname] }} dev eth1"
-  ignore_errors: "true"
-- name: Remove default gateway
-  command: "ip route del default"
-  ignore_errors: "true"
-- name: Add default gateway to router
-  command: "ip route add default via {{ default_gateways[inventory_hostname] }}"
-  ignore_errors: "true"
+- name: Configure network interfaces
+  template:
+    src: ifcfg.j2
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{ item.device }}
+  loop:
+    - device: eth1
+      ip: "{{ host_ips[inventory_hostname] }}"
+      netmask: 255.255.255.0
+      gateway: "{{ default_gateways[inventory_hostname] }}"
+  notify: network | restart
+
 - name: Set DNS nameserver
   lineinfile:
     path: /etc/resolv.conf
