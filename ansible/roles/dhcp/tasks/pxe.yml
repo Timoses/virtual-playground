@@ -13,6 +13,7 @@
   get_url:
     dest: /var/lib/tftpboot/undionly.kpxe
     url: http://boot.ipxe.org/undionly.kpxe
+    # version changes ? ...
     checksum: sha256:810d8818c2fd10827d5c154307332acbc59f62ceb2008e85c4a40582be6c87c0
 
 - name: pxe | Download Talos vmlinuz and initrd
@@ -23,7 +24,6 @@
   loop:
     - name: vmlinuz
       url: https://github.com/talos-systems/talos/releases/download/v0.3.0-beta.0/vmlinuz
-      sha256: e5990c539b5884400f88d98d3033da2c84e39fb98d91e97308192cc979e2018f
       sha256: e5e7266b2e889354346f37f140ef8f412105f3bb67693d15b1c7121153e53411
     - name: initramfs.xz
       url: https://github.com/talos-systems/talos/releases/download/v0.3.0-beta.0/initramfs.xz

@@ -1,10 +1,8 @@
 host_ips:
   client: '192.168.101.2'
   infra: '192.168.102.2'
-  cin: '192.168.103.2'
 
 default_gateways:
   client: '192.168.101.1'
   infra: '192.168.102.1'
-  cin: '192.168.103.1'
 

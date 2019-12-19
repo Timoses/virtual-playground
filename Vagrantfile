@@ -1,8 +1,14 @@
+# vi: filetype=ruby
+
 # Network Diagram
 # https://drive.google.com/open?id=15pEGT6TB5kWFl9kXrpdu7VqCEHKykfuj
 
+k8s_hosts = [
+  'kubernetes-talos-master-1'
+]
+
 Vagrant.configure("2") do |config|
-  config.vm.box = "centos/7"
+  config.vm.box = "centos/8"
 
   config.vm.define "client" do |client|
     client.vm.hostname = "client"
@@ -16,35 +22,29 @@ Vagrant.configure("2") do |config|
         virtualbox__intnet: "infra", auto_config: false
   end
 
-  config.vm.define "cin" do |cin|
-    cin.vm.hostname = "cin"
-    cin.vm.network "private_network", ip: "192.168.103.2",
-        virtualbox__intnet: "cin", auto_config: false
-  end
-
   config.vm.define "router" do |router|
     router.vm.hostname = "router"
     router.vm.network "private_network", ip: "192.168.101.1",
         virtualbox__intnet: "client"
     router.vm.network "private_network", ip: "192.168.102.1",
         virtualbox__intnet: "infra"
-    router.vm.network "private_network", ip: "192.168.103.1",
-        virtualbox__intnet: "cin"
   end
 
-  config.vm.define :pxe do |pxe|
-    pxe.vm.network "private_network", virtualbox__intnet: "infra", type: "dhcp"
-    #pxe_client.vm.provider :virtualbox do |vb|
-    #  vb.customize [
-    #    'modifyvm', :id,
-    #    '--nic1', 'intnet',
-    #    '--intnet1', 'infra',
-    #    '--boot1', 'net',
-    #    '--boot2', 'none',
-    #    '--boot3', 'none',
-    #    '--boot4', 'none'
-    #  ]
-    #end
+  k8s_hosts.each do |k8s|
+    config.vm.define k8s do |kube|
+      kube.vm.base_mac = "52540072FE6E"
+      kube.vm.provider :virtualbox do |vb|
+        vb.customize [
+          'modifyvm', :id,
+          '--nic1', 'intnet',
+          '--intnet1', 'infra',
+          '--boot1', 'net',
+          '--boot2', 'none',
+          '--boot3', 'none',
+          '--boot4', 'none'
+        ]
+      end
+    end
   end
 
   config.vm.provision "ansible" do |ansible|

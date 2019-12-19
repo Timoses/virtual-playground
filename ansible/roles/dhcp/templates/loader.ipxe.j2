@@ -7,5 +7,5 @@ echo Welcome to VIRTUAL NET iPXE
 
 # Only Talos now
 initrd initramfs.xz
-kernel vmlinuz initrd=initramfs.xz  page_poison=1 slab_nomerge pti=on slub_debug=P random.trust_cpu=on talos.platform=metal console=tty0 printk.devkmsg=on talos.config=http://192.168.102.2/init.yml
+kernel vmlinuz initrd=initramfs.xz  page_poison=1 slab_nomerge pti=on slub_debug=P random.trust_cpu=on talos.platform=metal console=tty0 printk.devkmsg=on talos.config=http://192.168.102.2/talos/${mac:hexraw}
 boot

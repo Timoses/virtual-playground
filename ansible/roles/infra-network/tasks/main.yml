@@ -10,14 +10,4 @@
       gateway: "{{ default_gateways[inventory_hostname] }}"
   notify: network | restart
 
-- name: Set DNS nameserver
-  lineinfile:
-    path: /etc/resolv.conf
-    regexp: "^nameserver"
-    line: "nameserver 192.168.102.2"
-    state: present
-- name: Set DNS search domain
-  lineinfile:
-    path: /etc/resolv.conf
-    line: "search virtual.net"
-    state: present
+- meta: flush_handlers

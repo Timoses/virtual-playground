@@ -1,0 +1,10 @@
+DEVICE={{ item.device }}
+{% if 'ip' in item %}
+IPADDR={{ item.ip }}
+{% endif %}
+{% if 'netmask' in item %}
+NETMASK={{ item.netmask }}
+{% endif %}
+{% if 'gateway' in item %}
+GATEWAY={{ item.gateway }}
+{% endif %}

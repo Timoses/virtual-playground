@@ -1,7 +1,6 @@
 ---
 - hosts: all
   become: true
-
   tasks:
     - name: Install utilities
       yum:
@@ -9,23 +8,25 @@
       loop:
         - tcpdump
         - bind-utils
-        - vim
-        - tmux
 
-- hosts: all:!router
+# First install required components on infra host to support
+# infrastructure
+- hosts: infra
   become: true
-
   roles:
-    - provision
+    - infra-network
+    - bind
+    - infra-dns
+    - dhcp
+    - talos
 
 - hosts: router
   become: true
   roles:
     - router
 
-- hosts: infra
+- hosts: all:!router
   become: true
   roles:
-    - bind
-    - dhcp
-    - talos
+    - infra-network
+    - infra-dns

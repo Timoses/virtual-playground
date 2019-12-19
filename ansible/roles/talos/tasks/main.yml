@@ -7,3 +7,35 @@
   package:
     name: lighttpd
 
+- name: Bind lighttpd to infra network
+  lineinfile:
+    path: /etc/lighttpd/lighttpd.conf
+    regexp: "^#?server.bind = .*$"
+    line: "server.bind = \"{{ host_ips[inventory_hostname] }}\""
+  notify: lighttpd | restart
+
+- name: Enable lighttpd
+  service:
+    name: lighttpd
+    state: started
+    enabled: yes
+
+- name: Install osctl
+  get_url:
+    url: https://github.com/talos-systems/talos/releases/download/v0.3.0-beta.0/osctl-linux-amd64
+    dest: /usr/bin/osctl
+    mode: 0755
+
+- name: Create lighttpd talos directory
+  file:
+    path: /var/www/lighttpd/talos
+    state: directory
+
+- name: Generate Talos config files
+  command: osctl config generate kubernetes-talos https://kubernetes-talos.virtual.net -o /var/www/lighttpd/talos
+
+- name: Link mac address to machine config files
+  file:
+    state: link
+    src: /var/www/lighttpd/talos/init.yaml
+    path: /var/www/lighttpd/talos/52540072fe6e # kubernetes-talos-master-1

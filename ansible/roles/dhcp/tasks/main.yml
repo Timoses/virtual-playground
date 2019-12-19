@@ -3,7 +3,7 @@
   yum:
     name: "{{ item }}"
   loop:
-    - dhcp
+    - dhcp-server
     - tftp
     - tftp-server
 
@@ -11,6 +11,17 @@
   template:
     src: dhcpd.conf.j2
     dest: /etc/dhcp/dhcpd.conf
+  notify: restart | dhcp
+
+- name: Create /etc/dhcpd.d directory
+  file:
+    path: /etc/dhcpd.d
+    state: directory
+
+- name: Place kubernetes.hosts file
+  template:
+    src: kubernetes.hosts.j2
+    dest: /etc/dhcpd.d/kubernetes.hosts
   notify: restart | dhcp
 
 - name: Start DHCP and TFTP service
@@ -24,7 +35,3 @@
 
 - name: Configure PXE
   include_tasks: pxe.yml
-  vars:
-    pxe_config:
-      dhcp_server: 192.168.102.2
-      tftp_server: 192.168.102.2
