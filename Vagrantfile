@@ -32,16 +32,36 @@ Vagrant.configure("2") do |config|
 
   k8s_hosts.each do |k8s|
     config.vm.define k8s do |kube|
-      kube.vm.base_mac = "52540072FE6E"
       kube.vm.provider :virtualbox do |vb|
+
+        # Attach first NIC to infra network
         vb.customize [
           'modifyvm', :id,
           '--nic1', 'intnet',
           '--intnet1', 'infra',
-          '--boot1', 'net',
-          '--boot2', 'none',
+          '--macaddress1', '52540072FE6E',
+          '--boot1', 'disk',
+          '--boot2', 'net',
           '--boot3', 'none',
           '--boot4', 'none'
+        ]
+
+        # Attach new disk (replace Vagrant-placed one)
+        k8s_disk = "./#{k8s}.vdi"
+        vb.customize [
+          'createmedium',
+          '--filename', k8s_disk,
+          '--size', 4 * 1024,
+          '--format', 'vdi',
+          '--variant', 'Fixed'
+        ] unless FileTest.exists?(k8s_disk)
+        vb.customize [
+          'storageattach', :id,
+          '--storagectl', 'IDE',
+          '--port', '0',
+          '--device', '0',
+          '--medium', k8s_disk,
+          '--type', 'hdd'
         ]
       end
     end

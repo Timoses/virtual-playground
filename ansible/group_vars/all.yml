@@ -2,9 +2,9 @@
 host_ifs:
   client:
     - device: eth1
-      ip: '192.168.101.2'
+      ip: '192.168.102.3'
       netmask: 255.255.255.0
-      gateway: 192.168.101.1
+      gateway: 192.168.102.1
       bootproto: none
   infra:
     - device: eth1

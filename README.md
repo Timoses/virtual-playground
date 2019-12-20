@@ -8,7 +8,8 @@
 
 First start up the infrastructure components:
 ```
-vagrant up router infra
+vagrant up router
+vagrant up infra
 ```
 
 ### Talos
