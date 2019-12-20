@@ -3,11 +3,21 @@
   template:
     src: ifcfg.j2
     dest: /etc/sysconfig/network-scripts/ifcfg-{{ item.device }}
-  loop:
-    - device: eth1
-      ip: "{{ host_ips[inventory_hostname] }}"
-      netmask: 255.255.255.0
-      gateway: "{{ default_gateways[inventory_hostname] }}"
+  loop: "{{ host_ifs[inventory_hostname] }}"
   notify: network | restart
+
+- name: Configure default gateway
+  template:
+    src: ifcfg.j2
+    dest: /etc/sysconfig/network
+  loop:
+    - gateway: "{{ host_ifs[inventory_hostname][0]['gateway'] }}"
+  when: inventory_hostname != 'router'
+
+- name: Remove default route from eth0
+  lineinfile:
+    path: /etc/sysconfig/network
+    line: DEFROUTE="no"
+  when: inventory_hostname != 'router'
 
 - meta: flush_handlers

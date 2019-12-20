@@ -11,7 +11,7 @@
   lineinfile:
     path: /etc/lighttpd/lighttpd.conf
     regexp: "^#?server.bind = .*$"
-    line: "server.bind = \"{{ host_ips[inventory_hostname] }}\""
+    line: "server.bind = \"{{ host_ifs[inventory_hostname][0]['ip'] }}\""
   notify: lighttpd | restart
 
 - name: Enable lighttpd
