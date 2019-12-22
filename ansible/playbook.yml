@@ -1,14 +1,15 @@
 ---
-- hosts: all
-  become: true
-  tasks:
-    - name: Install utilities
-      yum:
-        name: "{{ item }}"
-        update_cache: yes
-      loop:
-        - tcpdump
-        - bind-utils
+#- hosts: all
+#  become: true
+#  tasks:
+#    - name: Install utilities
+#      yum:
+#        name: "{{ item }}"
+#        update_cache: yes
+#      loop:
+#        - tcpdump
+#        - bind-utils
+#      ignore_errors: yes
 
 # First install required components on infra host to support
 # infrastructure
