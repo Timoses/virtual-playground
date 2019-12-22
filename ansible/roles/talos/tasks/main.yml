@@ -32,7 +32,7 @@
     state: directory
 
 - name: Generate Talos config files
-  command: osctl config generate kubernetes-talos https://kubernetes-talos.virtual.net -o /var/www/lighttpd/talos
+  command: osctl config generate kubernetes-talos https://kubernetes-talos.virtual.net:6443 -o /var/www/lighttpd/talos
 
 - name: Link mac address to machine config files
   file:
