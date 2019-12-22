@@ -10,6 +10,9 @@ k8s_hosts = [
 Vagrant.configure("2") do |config|
   config.vm.box = "centos/8"
 
+  # Disable VirtualBox auto update
+  config.vbguest.auto_update = false
+
   config.vm.define "client" do |client|
     client.vm.hostname = "client"
     client.vm.network "private_network", ip: "192.168.101.2",

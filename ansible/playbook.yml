@@ -5,6 +5,7 @@
     - name: Install utilities
       yum:
         name: "{{ item }}"
+        update_cache: yes
       loop:
         - tcpdump
         - bind-utils
