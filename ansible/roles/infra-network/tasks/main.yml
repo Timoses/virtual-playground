@@ -13,11 +13,13 @@
   loop:
     - gateway: "{{ host_ifs[inventory_hostname][0]['gateway'] }}"
   when: inventory_hostname != 'router'
+  notify: network | restart
 
 - name: Remove default route from eth0
   lineinfile:
-    path: /etc/sysconfig/network
+    path: /etc/sysconfig/network-scripts/ifcfg-eth0
     line: DEFROUTE="no"
   when: inventory_hostname != 'router'
+  notify: network-eth0 | restart
 
 - meta: flush_handlers

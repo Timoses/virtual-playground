@@ -3,3 +3,5 @@
   service:
     name: NetworkManager
     state: restarted
+- name: network-eth0 | restart
+  shell: 'bash -c "ifdown eth0 ; ifup eth0"'
