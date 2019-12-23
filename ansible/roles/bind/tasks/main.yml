@@ -21,3 +21,5 @@
     name: named
     state: started
     enabled: yes
+
+- meta: flush_handlers

@@ -12,7 +12,7 @@
 options {
     listen-on port 53 { 127.0.0.1; 192.168.102.2; };
     //listen-on-v6 port 53 { ::1; };
-    //forwarders { 8.8.8.8; 8.8.4.4; };
+    forwarders { {{ dns_forwarders | join(';') + ';' }} };
     directory       "/var/named";
     dump-file       "/var/named/data/cache_dump.db";
     statistics-file "/var/named/data/named_stats.txt";
