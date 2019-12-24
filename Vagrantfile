@@ -10,8 +10,12 @@ k8s_hosts = [
 Vagrant.configure("2") do |config|
   config.vm.box = "centos/8"
 
-  # Disable VirtualBox auto update
-  config.vbguest.auto_update = false
+  if Vagrant.has_plugin?("vagrant-vbguest")
+    # Disable VirtualBox auto update
+    # It significantly increases VMs
+    # provisioning time.
+    config.vbguest.auto_update = false
+  end
 
   config.vm.define "client" do |client|
     client.vm.hostname = "client"
